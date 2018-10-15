@@ -136,7 +136,7 @@ def sns_start_scan(s3_object):
 
 
 def sns_scan_results(s3_object, result):
-    if common.AV_STATUS_SNS_ARN is None:
+    if not common.AV_STATUS_SNS_ARN:
         return
     message = {
         'bucket': s3_object.bucket_name,
@@ -151,6 +151,13 @@ def sns_scan_results(s3_object, result):
         Message=json.dumps({'default': json.dumps(message)}),
         MessageStructure='json'
     )
+    # publish results of infected results to a separate destination
+    if common.AV_STATUS_SNS_ARN_INFECTED_ONLY and result == 'infected':
+        sns_client.publish(
+            TargetArn=common.AV_STATUS_SNS_ARN_INFECTED_ONLY,
+            Message=json.dumps({'default': json.dumps(message)}),
+            MessageStructure='json'
+        )
 
 
 def lambda_handler(event, context):

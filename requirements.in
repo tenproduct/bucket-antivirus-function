@@ -1,0 +1,11 @@
+certifi
+chardet
+datadog
+decorator
+idna
+requests
+simplejson
+urllib3
+pip-tools
+flake8
+isort

@@ -125,6 +125,13 @@ def sns_scan_results(s3_object, result):
         Message=json.dumps({'default': json.dumps(message)}),
         MessageStructure="json"
     )
+    # publish results of infected results to a separate destination
+    if AV_STATUS_SNS_ARN_INFECTED_ONLY and result == AV_STATUS_INFECTED:
+        sns_client.publish(
+            TargetArn=AV_STATUS_SNS_ARN_INFECTED_ONLY,
+            Message=json.dumps({'default': json.dumps(message)}),
+            MessageStructure='json'
+        )
 
 
 def lambda_handler(event, context):
